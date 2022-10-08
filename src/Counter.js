@@ -11,6 +11,10 @@ const storeStateInLocalStorage = (state) => {
   console.log(localStorage);
 };
 
+const updateDocumentTitle = (state) => {
+  document.title = state.count;
+};
+
 class Counter extends Component {
   constructor(props) {
     super(props);
@@ -25,18 +29,23 @@ class Counter extends Component {
         if (state.count >= max) return;
         return { count: state.count + step };
       },
-      () => storeStateInLocalStorage(this.state)
+      () => {
+        storeStateInLocalStorage(this.state);
+        updateDocumentTitle(this.state);
+      }
     );
 
     console.log("Before", this.state);
   };
 
   decrement = () => {
-    this.setState({ count: this.state.count - 1 });
+    this.setState({ count: this.state.count - 1 }, () =>
+      updateDocumentTitle(this.state)
+    );
   };
 
   reset = () => {
-    this.setState({ count: 0 });
+    this.setState({ count: 0 }, () => updateDocumentTitle(this.state));
   };
 
   render() {
