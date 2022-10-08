@@ -1,10 +1,10 @@
-import './App.css';
-import Counter from './Counter';
+import "./App.css";
+import Counter from "./Counter";
 
 function App() {
   return (
-    <div  className='app'>
-      <Counter />
+    <div className="app">
+      <Counter max={15} step={5} />
     </div>
   );
 }
