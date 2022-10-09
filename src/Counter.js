@@ -1,26 +1,29 @@
 import { Component } from "react";
 
-const increment = (state, props) => {
-  console.log({ props });
-  const { max, step } = props;
-  if (state.count >= max) return;
-  return { count: state.count + step };
-};
-
 class Counter extends Component {
   state = { count: 0 };
 
   increment = () => {
-    this.setState(increment);
+    this.setState(({ count }) => ({
+      count: count + 1,
+    }));
   };
 
   decrement = () => {
-    this.setState({ count: this.state.count - 1 });
+    this.setState(({ count }) => ({
+      count: count - 1,
+    }));
   };
 
   reset = () => {
-    this.setState({ count: 0 });
+    this.setState(() => ({ count: 0 }));
   };
+
+  componentDidUpdate() {
+    setTimeout(() => {
+      console.log(`Count: ${this.state.count}`);
+    }, 3000);
+  }
 
   render() {
     const { count } = this.state;
