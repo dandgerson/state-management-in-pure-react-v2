@@ -1,21 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-const useLocalStorage = (initialState, key) => {
-  const get = (initialState, key) => {
-    const value = localStorage.getItem(key);
-    if (value) return JSON.parse(value);
-    return initialState;
-  };
-
-  const [value, setValue] = useState(get(initialState, key));
-
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [value, key]);
-
-  return [value, setValue];
-};
-
 const Counter = ({ max, step }) => {
   const [count, setCount] = useState(0);
 
@@ -33,18 +17,17 @@ const Counter = ({ max, step }) => {
   const reset = () => setCount(0);
 
   useEffect(() => {
-    setTimeout(() => {
+    const id = setInterval(() => {
       console.log(`Count: ${count}`);
     }, 3000);
+
+    return () => clearInterval(id);
   }, [count]);
 
   return (
     <div className="counter">
-      <div>The message is: {message}</div>
-      <div className="count">
-        {message}
-        {count}
-      </div>
+      <div>{message}</div>
+      <div className="count">{count}</div>
       <div className="controls">
         <button onClick={increment}>Increment</button>
         <button onClick={decrement}>Decrement</button>
