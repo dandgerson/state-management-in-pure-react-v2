@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +9,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 code {
@@ -13,13 +21,14 @@ code {
 }
 
 .app {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgb(28 28 28);
   color: rgb(205 205 205);
+  overflow-y: auto;
 }
 
 .counter {
@@ -53,5 +62,26 @@ code {
       background-color: rgb(131 91 128);
       font-weight: bold;
     }
+  }
+}
+
+.grudges {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .grudge {
+    padding: 1rem;
+    border: 1px solid rgb(131 91 128);
+    width: 100%;
   }
 }
