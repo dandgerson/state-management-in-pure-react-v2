@@ -1,9 +1,12 @@
+import GrudgeContext from './Grudges/GrudgeContext';
 import Grudges from './Grudges/Grudges';
 
 function App() {
   return (
     <div className="app">
-      <Grudges />
+      <GrudgeContext>
+        <Grudges />
+      </GrudgeContext>
     </div>
   );
 }
