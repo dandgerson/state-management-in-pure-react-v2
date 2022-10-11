@@ -1,4 +1,6 @@
-const Grudge = ({ grudge, toggleForgineness }) => {
+import { memo } from 'react';
+
+const Grudge = memo(({ grudge, toggleForgineness }) => {
   const onForgive = () => {
     toggleForgineness(grudge.id);
   };
@@ -21,6 +23,6 @@ const Grudge = ({ grudge, toggleForgineness }) => {
       </label>
     </div>
   );
-};
+});
 
 export default Grudge;

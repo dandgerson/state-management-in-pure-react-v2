@@ -29,7 +29,6 @@ code {
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
   background-color: rgb(28 28 28);
   color: rgb(205 205 205);
   overflow-y: auto;
@@ -73,16 +72,18 @@ code {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 1rem;
   width: 50%;
   min-width: 400px;
+  margin-top: 2rem;
 
   .list {
     display: flex;
     flex-direction: column;
     width: 100%;
     gap: 0.5rem;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .grudge {

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
-const NewGrudge = ({ onSubmit }) => {
+const NewGrudge = memo(({ onSubmit }) => {
   const [person, setPerson] = useState('');
   const [reason, setReason] = useState('');
 
@@ -36,6 +36,6 @@ const NewGrudge = ({ onSubmit }) => {
       <button disabled={!person || !reason}>Submit</button>
     </form>
   );
-};
+});
 
 export default NewGrudge;
