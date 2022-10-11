@@ -1,9 +1,12 @@
-import Counter from "./Counter";
+import StarWars from './StarWars/StarWars';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
     <div className="app">
-      <Counter max={15} step={5} />
+      <BrowserRouter>
+        <StarWars />
+      </BrowserRouter>
     </div>
   );
 }
