@@ -5,15 +5,46 @@ import initialState from './initialState';
 export const t = {
   GRUDGE_ADD: 'GRUDGE_ADD',
   GRUDGE_FORGIVE: 'GRUDGE_FORGIVE',
+  UNDO: 'UNDO',
+  REDO: 'REDO',
 };
 
-const reducer = (state, action) => {
+const reducer = (state = defaultState, action) => {
+  if (action.type === t.UNDO) {
+    console.log('UNDO');
+    const [newPresent, ...newPast] = state.past;
+
+    return {
+      past: newPast,
+      present: newPresent,
+      future: [state.present, ...state.future],
+    };
+  }
+
+  if (action.type === t.REDO) {
+    console.log('REDO');
+
+    const [newPresent, ...newFuture] = state.future;
+
+    return {
+      past: [state.present, ...state.past],
+      present: newPresent,
+      future: newFuture,
+    };
+  }
+
   if (action.type === t.GRUDGE_ADD) {
-    return [action.payload, ...state];
+    const newPresent = [action.payload, ...state.present];
+
+    return {
+      past: [state.present, ...state.past],
+      present: newPresent,
+      future: state.future,
+    };
   }
 
   if (action.type === t.GRUDGE_FORGIVE) {
-    return state.map((grudge) => {
+    const newPresent = state.present.map((grudge) => {
       if (action.payload.id === grudge.id)
         return {
           ...grudge,
@@ -22,14 +53,28 @@ const reducer = (state, action) => {
 
       return grudge;
     });
+
+    return {
+      past: [state.present, ...state.past],
+      present: newPresent,
+      future: state.future,
+    };
   }
 
   return state;
 };
 const Context = createContext(['', () => {}]);
 
+const defaultState = {
+  past: [],
+  present: initialState,
+  future: [],
+};
+
 const GrudgeContext = ({ children }) => {
-  const [grudges, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, defaultState);
+  const hasPast = !!state.past.length;
+  const hasFuture = !!state.future.length;
 
   const addGrudge = useCallback(
     ({ person, reason }) => {
@@ -58,9 +103,15 @@ const GrudgeContext = ({ children }) => {
     [dispatch]
   );
 
+  const undo = useCallback(() => dispatch({ type: t.UNDO }), [dispatch]);
+  const redo = useCallback(() => dispatch({ type: t.REDO }), [dispatch]);
+
   return (
     <Context.Provider
-      value={[{ grudges, toggleForgineness, addGrudge }, dispatch]}
+      value={[
+        { state, toggleForgineness, addGrudge, undo, redo, hasPast, hasFuture },
+        dispatch,
+      ]}
     >
       {children}
     </Context.Provider>

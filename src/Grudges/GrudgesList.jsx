@@ -2,12 +2,18 @@ import Grudge from './Grudge';
 import { useGrudgeContext } from './GrudgeContext';
 
 const GrudgesList = () => {
-  const [{ grudges }] = useGrudgeContext();
+  const [
+    {
+      state: { present },
+    },
+  ] = useGrudgeContext();
+
+  console.log({ present });
 
   return (
     <div className="list">
-      <h1>Grudges ({grudges.length})</h1>
-      {grudges.map((grudge) => (
+      <h1>Grudges ({present.length})</h1>
+      {present.map((grudge) => (
         <Grudge key={grudge.id} grudge={grudge} />
       ))}
     </div>
