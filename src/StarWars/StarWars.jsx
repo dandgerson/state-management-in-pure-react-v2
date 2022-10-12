@@ -44,42 +44,58 @@ const fetchReducer = (state, action) => {
   return state;
 };
 
-const useFetch = (url) => {
-  const [state, dispatch] = useReducer(fetchReducer, initialState);
+// const useFetch = (url) => {
+//   const [state, dispatch] = useReducer(fetchReducer, initialState);
 
-  useEffect(() => {
-    dispatch({ type: t.LOADING });
+//   useEffect(() => {
+//     dispatch({ type: t.LOADING });
 
-    makeRequest();
+//     makeRequest();
 
-    async function makeRequest() {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
+//     async function makeRequest() {
+//       try {
+//         const res = await fetch(url);
+//         const data = await res.json();
 
-        dispatch({
-          type: t.REQUEST_COMPLETE,
-          payload: {
-            response: data,
-          },
-        });
-      } catch (err) {
-        dispatch({
-          type: t.ERROR,
-          payload: {
-            error: err,
-          },
-        });
-      }
+//         dispatch({
+//           type: t.REQUEST_COMPLETE,
+//           payload: {
+//             response: data,
+//           },
+//         });
+//       } catch (err) {
+//         dispatch({
+//           type: t.ERROR,
+//           payload: {
+//             error: err,
+//           },
+//         });
+//       }
+//     }
+//   }, [url]);
+
+//   return [state.response, state.isLoading, state.error];
+// };
+
+const useThunkReducer = (reducer, initialState) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const enhancedDispatch = (actionEntity) => {
+    console.log({ actionEntity });
+
+    if (typeof actionEntity === 'function') {
+      actionEntity(dispatch);
+    } else {
+      dispatch(actionEntity);
     }
-  }, [url]);
+  };
 
-  return [state.response, state.isLoading, state.error];
+  return [state, enhancedDispatch];
 };
 
 const StarWars = () => {
-  const [response, isLoading, error] = useFetch(endpoint + '/characters');
-  const characters = response?.characters ?? [];
+  const [state, dispatch] = useThunkReducer(fetchReducer, initialState);
+  const { response, isLoading, error } = state;
 
   return (
     <div className="star-wars">
@@ -92,7 +108,7 @@ const StarWars = () => {
           {isLoading ? (
             <p>Loading...</p>
           ) : (
-            <CharacterList characters={characters} />
+            <CharacterList characters={response.characters || []} />
           )}
 
           {error ? <p>{error.message}</p> : null}
