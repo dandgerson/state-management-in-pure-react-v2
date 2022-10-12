@@ -1,8 +1,14 @@
+import { NavLink } from 'react-router-dom';
+
 const CharacterList = ({ characters }) => {
   return characters.map((character) => (
-    <div className="character" key={character.id}>
+    <NavLink
+      className="character"
+      key={character.id}
+      to={`characters/${character.id}`}
+    >
       {character.name}
-    </div>
+    </NavLink>
   ));
 };
 

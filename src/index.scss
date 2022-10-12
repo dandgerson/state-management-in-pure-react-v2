@@ -69,16 +69,60 @@ code {
 }
 
 .star-wars {
-  .sidebar {
+  width: 100%;
+  padding: 0 4rem;
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-height: 80vh;
+      min-width: 35%;
+      overflow-y: auto;
+
+      .character {
+        color: rgb(205 205 205);
+        text-decoration: none;
+        border: 0.2rem solid rgb(131 91 128);
+        border-radius: 0.1rem;
+        padding: 1rem;
+        transition: all linear 200ms;
+
+        &.active {
+          font-weight: bold;
+          text-decoration: underline;
+          border: 0.4rem solid rgb(187 124 181);
+          background-color: rgb(44 38 43);
+        }
+      }
+    }
+
+    .content {
+      flex: 1;
+    }
+  }
+
+  .characterView {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 80vh;
-    overflow-y: auto;
 
-    .character {
-      border: 0.2rem solid rgb(131 91 128);
-      padding: 1rem;
+    .property {
+      display: flex;
+      gap: 1rem;
+
+      &_name {
+        flex: 1;
+        text-align: right;
+      }
+      &_value {
+        flex: 2;
+      }
     }
   }
 }

@@ -2,6 +2,8 @@ import CharacterList from './CharacterList';
 import endpoint from './endpoint';
 import { useReducer } from 'react';
 import { useEffect } from 'react';
+import { Outlet, Route, Routes } from 'react-router-dom';
+import CharacterView from './CharacterView';
 
 const initialState = {
   response: null,
@@ -83,24 +85,38 @@ const StarWars = () => {
 
   return (
     <div className="star-wars">
-      <header>
-        <h1>Star Wars Characters</h1>
-      </header>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <header>
+                <h1>Star Wars Characters</h1>
+              </header>
 
-      <main>
-        <section className="sidebar">
-          <button onClick={() => enhanceDispatch(fetchCharacters)}>
-            Fetch Characters
-          </button>
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : isLoading !== null ? (
-            <CharacterList characters={response.characters || []} />
-          ) : null}
+              <main>
+                <section className="sidebar">
+                  <button onClick={() => enhanceDispatch(fetchCharacters)}>
+                    Fetch Characters
+                  </button>
+                  {isLoading ? (
+                    <p>Loading...</p>
+                  ) : isLoading !== null ? (
+                    <CharacterList characters={response.characters || []} />
+                  ) : null}
 
-          {error ? <p>{error.message}</p> : null}
-        </section>
-      </main>
+                  {error ? <p>{error.message}</p> : null}
+                </section>
+                <section className="content">
+                  <Outlet />
+                </section>
+              </main>
+            </>
+          }
+        >
+          <Route path="characters/:id" element={<CharacterView />} />
+        </Route>
+      </Routes>
     </div>
   );
 };
