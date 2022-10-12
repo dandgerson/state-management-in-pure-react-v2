@@ -1,22 +1,40 @@
 import { useState } from 'react';
-import dummyData from './dummyData';
 import CharacterList from './CharacterList';
 import { useEffect } from 'react';
 import endpoint from './endpoint';
 
-const StarWars = () => {
-  const [characters, setCharacters] = useState(dummyData);
+const useFetch = (url) => {
+  const [response, setResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getCharactes();
+    setIsLoading(true);
+    setError(null);
+    setResponse(null);
 
-    async function getCharactes() {
-      const res = await fetch(endpoint + '/characters');
-      const json = await res.json();
+    makeRequest();
 
-      setCharacters(json.characters);
+    async function makeRequest() {
+      try {
+        const res = await fetch(url);
+        const parsedJson = await res.json();
+
+        setResponse(parsedJson);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, []);
+  }, [url]);
+
+  return [response, isLoading, error];
+};
+
+const StarWars = () => {
+  const [response, isLoading, error] = useFetch(endpoint + '/characters');
+  const characters = response?.characters ?? [];
 
   return (
     <div className="star-wars">
@@ -26,7 +44,13 @@ const StarWars = () => {
 
       <main>
         <section className="sidebar">
-          <CharacterList characters={characters} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <CharacterList characters={characters} />
+          )}
+
+          {error ? <p>{error.message}</p> : null}
         </section>
       </main>
     </div>
