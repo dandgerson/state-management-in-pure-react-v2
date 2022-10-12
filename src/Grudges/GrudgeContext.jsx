@@ -9,30 +9,50 @@ export const t = {
   REDO: 'REDO',
 };
 
-const reducer = (state = defaultState, action) => {
-  if (action.type === t.UNDO) {
-    console.log('UNDO');
-    const [newPresent, ...newPast] = state.past;
+const useUndoReducer = (reducer, initialState) => {
+  const undoState = {
+    past: [],
+    present: initialState,
+    future: [],
+  };
 
-    return {
-      past: newPast,
-      present: newPresent,
-      future: [state.present, ...state.future],
-    };
-  }
+  const undoReducer = (state, action) => {
+    const newPresent = reducer(state, action);
 
-  if (action.type === t.REDO) {
-    console.log('REDO');
+    if (action.type === t.UNDO) {
+      console.log('UNDO');
+      const [newPresent, ...newPast] = state.past;
 
-    const [newPresent, ...newFuture] = state.future;
+      return {
+        past: newPast,
+        present: newPresent,
+        future: [state.present, ...state.future],
+      };
+    }
+
+    if (action.type === t.REDO) {
+      console.log('REDO');
+
+      const [newPresent, ...newFuture] = state.future;
+
+      return {
+        past: [state.present, ...state.past],
+        present: newPresent,
+        future: newFuture,
+      };
+    }
 
     return {
       past: [state.present, ...state.past],
       present: newPresent,
-      future: newFuture,
+      future: state.future,
     };
-  }
+  };
 
+  return useReducer(reducer, initialState);
+};
+
+const reducer = (state = defaultState, action) => {
   if (action.type === t.GRUDGE_ADD) {
     const newPresent = [action.payload, ...state.present];
 
