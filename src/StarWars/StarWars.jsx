@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import CharacterList from './CharacterList';
-import { useEffect } from 'react';
 import endpoint from './endpoint';
 import { useReducer } from 'react';
+import { useEffect } from 'react';
 
 const initialState = {
   response: null,
-  isLoading: true,
+  isLoading: null,
   error: null,
 };
 
@@ -27,7 +26,7 @@ const fetchReducer = (state, action) => {
 
   if (action.type === t.REQUEST_COMPLETE) {
     return {
-      response: action.payload.response,
+      response: { characters: action.payload.characters },
       isLoading: false,
       error: null,
     };
@@ -43,39 +42,6 @@ const fetchReducer = (state, action) => {
 
   return state;
 };
-
-// const useFetch = (url) => {
-//   const [state, dispatch] = useReducer(fetchReducer, initialState);
-
-//   useEffect(() => {
-//     dispatch({ type: t.LOADING });
-
-//     makeRequest();
-
-//     async function makeRequest() {
-//       try {
-//         const res = await fetch(url);
-//         const data = await res.json();
-
-//         dispatch({
-//           type: t.REQUEST_COMPLETE,
-//           payload: {
-//             response: data,
-//           },
-//         });
-//       } catch (err) {
-//         dispatch({
-//           type: t.ERROR,
-//           payload: {
-//             error: err,
-//           },
-//         });
-//       }
-//     }
-//   }, [url]);
-
-//   return [state.response, state.isLoading, state.error];
-// };
 
 const useThunkReducer = (reducer, initialState) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -93,9 +59,27 @@ const useThunkReducer = (reducer, initialState) => {
   return [state, enhancedDispatch];
 };
 
+const fetchCharacters = (dispatch) => {
+  dispatch({ type: t.LOADING });
+
+  fetch(endpoint + '/characters')
+    .then((response) => response.json())
+    .then((data) => {
+      dispatch({
+        type: t.REQUEST_COMPLETE,
+        payload: { characters: data.characters },
+      });
+    })
+    .catch((error) => {
+      dispatch({ type: t.ERROR, payload: { error } });
+    });
+};
+
 const StarWars = () => {
-  const [state, dispatch] = useThunkReducer(fetchReducer, initialState);
+  const [state, enhanceDispatch] = useThunkReducer(fetchReducer, initialState);
   const { response, isLoading, error } = state;
+
+  useEffect(() => enhanceDispatch((dispatch) => {}), []);
 
   return (
     <div className="star-wars">
@@ -105,11 +89,14 @@ const StarWars = () => {
 
       <main>
         <section className="sidebar">
+          <button onClick={() => enhanceDispatch(fetchCharacters)}>
+            Fetch Characters
+          </button>
           {isLoading ? (
             <p>Loading...</p>
-          ) : (
+          ) : isLoading !== null ? (
             <CharacterList characters={response.characters || []} />
-          )}
+          ) : null}
 
           {error ? <p>{error.message}</p> : null}
         </section>
