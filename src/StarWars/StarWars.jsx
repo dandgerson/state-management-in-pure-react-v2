@@ -2,34 +2,79 @@ import { useState } from 'react';
 import CharacterList from './CharacterList';
 import { useEffect } from 'react';
 import endpoint from './endpoint';
+import { useReducer } from 'react';
+
+const initialState = {
+  response: null,
+  isLoading: true,
+  error: null,
+};
+
+const t = {
+  LOADING: 'LOADING',
+  REQUEST_COMPLETE: 'REQUEST_COMPLETE',
+  ERROR: 'ERROR',
+};
+
+const fetchReducer = (state, action) => {
+  if (action.type === t.LOADING) {
+    return {
+      response: null,
+      isLoading: true,
+      error: null,
+    };
+  }
+
+  if (action.type === t.REQUEST_COMPLETE) {
+    return {
+      response: action.payload.response,
+      isLoading: false,
+      error: null,
+    };
+  }
+
+  if (action.type === t.ERROR) {
+    return {
+      response: null,
+      isLoading: false,
+      error: action.payload.error,
+    };
+  }
+
+  return state;
+};
 
 const useFetch = (url) => {
-  const [response, setResponse] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [state, dispatch] = useReducer(fetchReducer, initialState);
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-    setResponse(null);
+    dispatch({ type: t.LOADING });
 
     makeRequest();
 
     async function makeRequest() {
       try {
         const res = await fetch(url);
-        const parsedJson = await res.json();
+        const data = await res.json();
 
-        setResponse(parsedJson);
+        dispatch({
+          type: t.REQUEST_COMPLETE,
+          payload: {
+            response: data,
+          },
+        });
       } catch (err) {
-        setError(err);
-      } finally {
-        setIsLoading(false);
+        dispatch({
+          type: t.ERROR,
+          payload: {
+            error: err,
+          },
+        });
       }
     }
   }, [url]);
 
-  return [response, isLoading, error];
+  return [state.response, state.isLoading, state.error];
 };
 
 const StarWars = () => {
