@@ -1,11 +1,53 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
+
+const reducer = (state, action) => {
+  return {
+    ...state,
+    ...action.payload,
+  };
+};
+
+const useSetState = (initialState) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const setState = (payload) => dispatch({ type: '', payload });
+
+  return [state, setState];
+};
+
+const t = {
+  username: 'username',
+  email: 'email',
+  password: 'password',
+  confirmPassword: 'confirmPassword',
+  isInvestmentChecked: 'isInvestmentChecked',
+};
+
+const initialState = {
+  [t.username]: '',
+  [t.email]: '',
+  [t.password]: '',
+  [t.confirmPassword]: '',
+  [t.isInvestmentChecked]: false,
+};
 
 const SignUpFrom = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isInvestmentsChecked, setIsInvestmentsChecked] = useState(false);
+  const [state, setState] = useSetState(initialState);
+
+  const clear = () => {
+    setState(initialState);
+  };
+
+  const handleChange = (e) => {
+    console.log({ eventtarget: e.target });
+
+    if (e.target.name === 'investments') {
+      setState({ [t.isInvestmentChecked]: !state.isInvestmentChecked });
+
+      return;
+    }
+    setState({ [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="sugnupForm">
@@ -19,55 +61,56 @@ const SignUpFrom = () => {
         onSubmit={(e) => {
           e.preventDefault();
           console.log('SUBMIT');
+          clear();
         }}
       >
-        <label htmlFor="name">
+        <label htmlFor={t.username}>
           <div>User Name</div>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id={t.username}
+            name={t.username}
+            value={state.username}
+            onChange={handleChange}
           />
         </label>
-        <label htmlFor="email">
+        <label htmlFor={t.email}>
           <div>Email</div>
           <input
-            type="text"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            id={t.email}
+            name={t.email}
+            value={state.email}
+            onChange={handleChange}
           />
         </label>
-        <label htmlFor="password">
+        <label htmlFor={t.password}>
           <div>Password</div>
           <input
             type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id={t.password}
+            name={t.password}
+            value={state.password}
+            onChange={handleChange}
           />
         </label>
-        <label htmlFor="confirm-password">
+        <label htmlFor={t.confirmPassword}>
           <div>Confirm Password</div>
           <input
             type="password"
-            id="confirm-password"
-            name="confirm-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            id={t.confirmPassword}
+            name={t.confirmPassword}
+            value={state.confirmPassword}
+            onChange={handleChange}
           />
         </label>
-        <label className="investments" htmlFor="investments">
+        <label className="investments" htmlFor={t.isInvestmentChecked}>
           <input
             type="checkbox"
-            id="investments"
-            name="investments"
-            checked={isInvestmentsChecked}
-            onChange={() => setIsInvestmentsChecked(!isInvestmentsChecked)}
+            id={t.isInvestmentChecked}
+            name={t.isInvestmentChecked}
+            checked={state.isInvestmentChecked}
+            onChange={handleChange}
           />
           <div>Do you want to maybe help us out with an angel investment?</div>
         </label>
