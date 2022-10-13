@@ -17,12 +17,11 @@ const useUndoReducer = (reducer, initialState) => {
   };
 
   const undoReducer = (state, action) => {
-    const newPresent = reducer(state, action);
+    const newPresent = reducer(state.present, action); // Cuz all their reducer knows about is the presentß
 
     if (action.type === t.UNDO) {
       console.log('UNDO');
       const [newPresent, ...newPast] = state.past;
-
       return {
         past: newPast,
         present: newPresent,
@@ -34,7 +33,6 @@ const useUndoReducer = (reducer, initialState) => {
       console.log('REDO');
 
       const [newPresent, ...newFuture] = state.future;
-
       return {
         past: [state.present, ...state.past],
         present: newPresent,
@@ -45,26 +43,21 @@ const useUndoReducer = (reducer, initialState) => {
     return {
       past: [state.present, ...state.past],
       present: newPresent,
-      future: state.future,
+      future: [],
     };
   };
 
-  return useReducer(reducer, initialState);
+  return useReducer(undoReducer, undoState);
 };
 
-const reducer = (state = defaultState, action) => {
+const reducer = (state = initialState, action) => {
   if (action.type === t.GRUDGE_ADD) {
-    const newPresent = [action.payload, ...state.present];
-
-    return {
-      past: [state.present, ...state.past],
-      present: newPresent,
-      future: state.future,
-    };
+    return [action.payload, ...state];
   }
 
   if (action.type === t.GRUDGE_FORGIVE) {
-    const newPresent = state.present.map((grudge) => {
+    console.log('GRUDGE_FORGIVE', { state });
+    return state.map((grudge) => {
       if (action.payload.id === grudge.id)
         return {
           ...grudge,
@@ -73,26 +66,14 @@ const reducer = (state = defaultState, action) => {
 
       return grudge;
     });
-
-    return {
-      past: [state.present, ...state.past],
-      present: newPresent,
-      future: state.future,
-    };
   }
 
   return state;
 };
 const Context = createContext(['', () => {}]);
 
-const defaultState = {
-  past: [],
-  present: initialState,
-  future: [],
-};
-
 const GrudgeContext = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, defaultState);
+  const [state, dispatch] = useUndoReducer(reducer, initialState);
   const hasPast = !!state.past.length;
   const hasFuture = !!state.future.length;
 
