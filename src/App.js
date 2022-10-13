@@ -1,9 +1,9 @@
-import Counter from "./Counter";
+import SignUpForm from './SignUpForm';
 
 function App() {
   return (
     <div className="app">
-      <Counter max={15} step={5} />
+      <SignUpForm />
     </div>
   );
 }

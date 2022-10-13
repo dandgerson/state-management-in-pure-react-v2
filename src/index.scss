@@ -55,3 +55,31 @@ code {
     }
   }
 }
+
+.sugnupForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+  border: 0.2rem solid rgb(131 91 128);
+  padding: 2rem;
+  gap: 1rem;
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      &.investments {
+        flex-direction: row;
+      }
+    }
+  }
+}
